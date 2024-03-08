@@ -1,0 +1,61 @@
+
+CREATE TABLE instructors (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE courses (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  max_seats INT NOT NULL,
+  start_date DATE NOT NULL,
+  instructor_id INT NOT NULL REFERENCES instructors(id)
+);
+
+CREATE TABLE leads (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  phone_number VARCHAR(20),
+  linkedin_profile VARCHAR(255),
+  course_id INT NOT NULL REFERENCES courses(id),
+  status VARCHAR(255) NOT NULL DEFAULT 'Waitlisted',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE comments (
+  id SERIAL PRIMARY KEY,
+  lead_id INT NOT NULL REFERENCES leads(id),
+  instructor_id INT NOT NULL REFERENCES instructors(id),
+  content TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- Instructors
+INSERT INTO instructors (name, email) VALUES
+  ('John Doe', 'john.doe@airtribe.com'),
+  ('Jane Smith', 'jane.smith@airtribe.com'),
+  ('Michael Lee', 'michael.lee@airtribe.com');
+
+-- Courses
+INSERT INTO courses (name, max_seats, start_date, instructor_id) VALUES
+  ('Python Programming Fundamentals', 20, '2024-04-01', 1),
+  ('Data Analysis with R', 15, '2024-05-15', 2),
+  ('Machine Learning for Beginners', 30, '2024-06-01', 3);
+
+-- Leads
+INSERT INTO leads (name, email, phone_number, course_id) VALUES
+  ('Alice Johnson', 'alice.johnson@example.com', '+1234567890', 1),
+  ('Bob Smith', 'bob.smith@example.com', '+9876543210', 2),
+  ('Charlie Wilson', 'charlie.wilson@example.com', '', 3),
+  ('Diana Evans', 'diana.evans@example.com', '+0987654321', 1),
+  ('Ethan Miller', 'ethan.miller@example.com', '', 2),
+  ('Fiona Garcia', 'fiona.garcia@example.com', '+1234567890', 3);
+
+-- Comments
+INSERT INTO comments (lead_id, instructor_id, content) VALUES
+  (1, 1, 'Welcome to the course! I look forward to helping you learn Python.');
+
+
