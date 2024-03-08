@@ -143,6 +143,30 @@ app.post("/api/course/registration", async (req, res) => {
   }
 });
 
+app.put("/api/lead/update", async (req, res) => {
+  const { lead_id, status } = req.body;
+  if (!lead_id || !status) {
+    return res.status(400).send("id and status required");
+  }
+  const status_list = ["Accept", "Reject"];
+  if (!status_list.includes(status)) {
+    return res.status(400).send("status must be either Accept or Reject");
+  }
+  try {
+    const query = "UPDATE leads SET status = $2  WHERE id = $1 ";
+    const values = [lead_id, status];
+    const result = await pool.query(query, values);
+
+    if (result.rowCount === 0) {
+      return res.status(404).send("Lead with the provided ID not found");
+    }
+
+    res.status(201).send("Status Updated");
+  } catch (error) {
+    res.status(500).send({ error });
+  }
+});
+
 app.post("/setup", async (req, res) => {
   try {
     const backupData = fs.readFileSync("./setup_script.txt").toString("utf-8");
