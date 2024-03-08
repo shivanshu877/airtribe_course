@@ -9,6 +9,7 @@ var validator = require("validator");
 
 app.post("/api/course/create", async (req, res) => {
   const { name, max_seats, start_date, instructor_id } = req.body;
+  const dateRegex = /^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\d{4}$/;
   if (!name || !max_seats || !start_date || !instructor_id) {
     return res
       .status(400)
@@ -20,7 +21,12 @@ app.post("/api/course/create", async (req, res) => {
     parseInt(parts[1], 10) - 1,
     parseInt(parts[0], 10)
   );
-  if (dt == "Invalid date" || isNaN(dt) || dt < new Date()) {
+  if (
+    dt == "Invalid date" ||
+    isNaN(dt) ||
+    dt < new Date() ||
+    !dateRegex.test(start_date)
+  ) {
     return res
       .status(400)
       .send(
@@ -44,6 +50,58 @@ app.post("/api/course/create", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send({ err });
+  }
+});
+app.put("/api/course/update", async (req, res) => {
+  const { id, name, max_seats, start_date } = req.body;
+  if (!id) {
+    return res.status(400).send("id required");
+  }
+  if (!name || !max_seats || !start_date) {
+    return res.status(400).send("name , max_seats, start_date required");
+  }
+  var parts = start_date.split("-");
+  var dt = new Date(
+    parseInt(parts[2], 10),
+    parseInt(parts[1], 10) - 1,
+    parseInt(parts[0], 10)
+  );
+  if (dt == "Invalid date" || isNaN(dt) || dt < new Date()) {
+    return res
+      .status(400)
+      .send(
+        "start_date required in the future date format and in mm-dd-yyyy format"
+      );
+  }
+
+  let updateQuery = "UPDATE courses SET";
+  const updateValues = [];
+  if (name) {
+    updateQuery += " name = $1";
+    updateValues.push(name);
+  }
+  if (max_seats) {
+    updateQuery += `${updateValues.length > 0 ? "," : ""} max_seats = $${
+      updateValues.length + 1
+    }`;
+    updateValues.push(max_seats);
+  }
+  if (start_date) {
+    updateQuery += `${updateValues.length > 0 ? "," : ""} start_date = $${
+      updateValues.length + 1
+    }`;
+    updateValues.push(start_date);
+  }
+
+  updateQuery += " WHERE id = $" + (updateValues.length + 1);
+  updateValues.push(id);
+
+  try {
+    const result = await pool.query(updateQuery, updateValues);
+    res.status(201).send({ message: "course updated" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err });
   }
 });
 
