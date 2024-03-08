@@ -52,26 +52,26 @@ app.post("/api/course/create", async (req, res) => {
     res.status(500).send({ err });
   }
 });
+
 app.put("/api/course/update", async (req, res) => {
   const { id, name, max_seats, start_date } = req.body;
   if (!id) {
     return res.status(400).send("id required");
   }
-  if (!name || !max_seats || !start_date) {
-    return res.status(400).send("name , max_seats, start_date required");
-  }
-  var parts = start_date.split("-");
-  var dt = new Date(
-    parseInt(parts[2], 10),
-    parseInt(parts[1], 10) - 1,
-    parseInt(parts[0], 10)
-  );
-  if (dt == "Invalid date" || isNaN(dt) || dt < new Date()) {
-    return res
-      .status(400)
-      .send(
-        "start_date required in the future date format and in mm-dd-yyyy format"
-      );
+  if (start_date) {
+    var parts = start_date.split("-");
+    var dt = new Date(
+      parseInt(parts[2], 10),
+      parseInt(parts[1], 10) - 1,
+      parseInt(parts[0], 10)
+    );
+    if (dt == "Invalid date" || isNaN(dt) || dt < new Date()) {
+      return res
+        .status(400)
+        .send(
+          "start_date required in the future date format and in mm-dd-yyyy format"
+        );
+    }
   }
 
   let updateQuery = "UPDATE courses SET";
