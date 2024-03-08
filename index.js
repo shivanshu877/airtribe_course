@@ -105,6 +105,44 @@ app.put("/api/course/update", async (req, res) => {
   }
 });
 
+app.post("/api/course/registration", async (req, res) => {
+  const { name, email, phone_number, linkedin_profile, course_id } = req.body;
+  if (!name || !email || !phone_number || !linkedin_profile || !course_id) {
+    return res
+      .status(400)
+      .send(
+        "name , email , phone_number , linkedin_profile , course_id required"
+      );
+  }
+
+  if (!validator.isEmail(email)) {
+    return res.status(400).send("email is not valid");
+  }
+  if (phone_number.length != 10) {
+    return res.status(400).send("phone_number is not valid");
+  }
+  if (!validator.isURL(linkedin_profile)) {
+    return res.status(400).send("linkedin_profile is not valid");
+  }
+  try {
+    const query = `
+      INSERT INTO leads (name, email, phone_number, linkedin_profile, course_id)
+      VALUES ($1, $2, $3 , $4 , $5)
+      RETURNING id;
+    `;
+    const values = [name, email, phone_number, linkedin_profile, course_id];
+
+    const result = await pool.query(query, values);
+    res.status(201).send({
+      message: "New registration created",
+      registrationId: result.rows[0].id,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ err });
+  }
+});
+
 app.post("/setup", async (req, res) => {
   try {
     const backupData = fs.readFileSync("./setup_script.txt").toString("utf-8");
