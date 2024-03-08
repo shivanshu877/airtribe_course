@@ -167,6 +167,52 @@ app.put("/api/lead/update", async (req, res) => {
   }
 });
 
+app.get("/api/lead/search", async (req, res) => {
+  const { name, email } = req.body;
+  if (!name && !email) {
+    return res.status(400).send("name or email required");
+  }
+
+  let query =
+    "SELECT id , name , email ,phone_number ,linkedin_profile , course_id  , status   FROM leads WHERE (";
+  let values = [];
+  if (name) {
+    query += `name = $${values.length + 1} `;
+    values.push(name);
+  }
+  if (email) {
+    if (name) query += " OR ";
+    query += `email = $${values.length + 1} `;
+    values.push(email);
+  }
+  query += ");";
+  try {
+    const result = await pool.query(query, values);
+    res.status(201).send({ details: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err });
+  }
+});
+
+app.post("/api/lead/comment", async (req, res) => {
+  const { lead_id, instructor_id, content } = req.body;
+  if (!lead_id || !instructor_id || !content) {
+    return res.status(400).send("lead_id  , instructor_id , content  required");
+  }
+  const query =
+    "INSERT INTO comments (lead_id , instructor_id ,  content)  VALUES ($1 , $2 , $3) RETURNING id;";
+  try {
+    const result = await pool.query(query, [lead_id, instructor_id, content]);
+    res
+      .status(201)
+      .send({ message: "New comment added", comment_id: result.rows[0].id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: error });
+  }
+});
+
 app.post("/setup", async (req, res) => {
   try {
     const backupData = fs.readFileSync("./setup_script.txt").toString("utf-8");
