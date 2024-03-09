@@ -80,6 +80,7 @@ Updates an existing course with the provided details.
 ```json
 {
   "id": "1",
+  "name": "100 days c++ code",
   "max_seats": "1",
   "start_date": "04-04-2024"
 }
