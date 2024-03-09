@@ -81,6 +81,11 @@ app.put("/api/course/update", async (req, res) => {
     updateValues.push(name);
   }
   if (max_seats) {
+    if (max_seats < 0) {
+      return res
+        .status(201)
+        .send({ message: "max_seats should be greater than 0" });
+    }
     updateQuery += `${updateValues.length > 0 ? "," : ""} max_seats = $${
       updateValues.length + 1
     }`;
@@ -98,10 +103,13 @@ app.put("/api/course/update", async (req, res) => {
 
   try {
     const result = await pool.query(updateQuery, updateValues);
-    res.status(201).send({ message: "course updated" });
+    if (result.rowCount == 0) {
+      return res.status(201).send({ message: "Course not found" });
+    }
+    return res.status(201).send({ message: "Course Updated" });
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: err });
+    return res.status(500).send({ message: err });
   }
 });
 
