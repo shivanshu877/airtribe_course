@@ -62,10 +62,10 @@ Creates a new course with the provided details.
 - **Body**:
   ```json
   {
-    "name": string,
-    "max_seats": int,
-    "start_date": mm-dd-yyyy,
-    "instructor_id": int
+    "name": "string",
+    "max_seats": "int",
+    "start_date": "mm-dd-yyyy",
+    "instructor_id": "int"
   }
   ```
 
@@ -79,10 +79,10 @@ Updates an existing course with the provided details.
 
 ```json
 {
-  "id": int,
-  "name": string[optional],
-  "max_seats": int[optional],
-  "start_date": mm-dd-yyyy[optional]
+  "id": "int",
+  "name": "string[optional]",
+  "max_seats": "int[optional]",
+  "start_date": "mm-dd-yyyy[optional]"
 }
 ```
 
@@ -98,11 +98,11 @@ Registers a new lead for a course.
 
 ```json
 {
-  "name": string,
-  "email": string,
-  "phone_number": string,
-  "linkedin_profile": string,
-  "course_id": int
+  "name": "string",
+  "email": "string",
+  "phone_number": "string",
+  "linkedin_profile": "string",
+  "course_id": "int"
 }
 ```
 
@@ -116,8 +116,8 @@ Registers a new lead for a course.
 
 ```json
 {
-  "lead_id": int,
-  "status": string
+  "lead_id": "int",
+  "status": "string"
 }
 ```
 
@@ -131,8 +131,8 @@ Registers a new lead for a course.
 
 ```json
 {
-  "name": string[optional],
-  "email": string[optional]
+  "name": "string[optional]",
+  "email": "string[optional]"
 }
 ```
 
@@ -146,8 +146,8 @@ Registers a new lead for a course.
 
 ```json
 {
-  "lead_id": int,
-  "instructor_id":int,
-  "content": int
+  "lead_id": "int",
+  "instructor_id": "int",
+  "content": "int"
 }
 ```
