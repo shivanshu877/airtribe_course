@@ -13,6 +13,11 @@ router.post("/create", async (req, res) => {
       .status(400)
       .send("name, max_seats, start_date, instructor_id required");
   }
+  if (max_seats < 0) {
+    return res
+      .status(201)
+      .send({ message: "max_seats should be greater than 0" });
+  }
   var parts = start_date.split("-");
   var dt = new Date(
     parseInt(parts[2], 10),
