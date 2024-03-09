@@ -16,5 +16,5 @@ app.use("/api/lead", commentApi);
 app.use("/api", setupApi);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Server Running on port ${port}`);
 });
