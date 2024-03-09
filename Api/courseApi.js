@@ -16,7 +16,7 @@ router.post("/create", async (req, res) => {
   if (max_seats < 0) {
     return res
       .status(201)
-      .send({ message: "max_seats should be greater than 0" });
+      .send({ message: "max_seats should be greater than 0 " });
   }
   var parts = start_date.split("-");
   var dt = new Date(
