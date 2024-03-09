@@ -26,7 +26,7 @@ This will start the server and any associated services specified in the `docker-
 
 Once the environment is up and running, you can access the server at [http://localhost:3000](http://localhost:3000).
 
-# pgdmin4
+# pgadmin4
 
 you can access the pdadmin at [http://localhost:5050](http://localhost:5050)
 
@@ -39,6 +39,10 @@ you can access postgresql database through pgadmin using the following credation
 - **username**:`postgres`
 - **password**:`postgres`
 - **database**:`postgres`
+
+# Database ERD
+
+![Screenshot](screenshot.png)
 
 
 # API Documentation
