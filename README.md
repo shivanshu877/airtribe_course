@@ -42,7 +42,7 @@ you can access postgresql database through pgadmin using the following credation
 
 # Database ERD
 
-![Screenshot](screenshot.png)
+![Screenshot](databaseerd.png)
 
 
 # API Documentation
