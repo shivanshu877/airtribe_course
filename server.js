@@ -104,9 +104,9 @@ app.put("/api/course/update", async (req, res) => {
   try {
     const result = await pool.query(updateQuery, updateValues);
     if (result.rowCount == 0) {
-      return res.status(201).send({ message: "Course not found" });
+      return res.status(200).send({ message: "Course not found" });
     }
-    return res.status(201).send({ message: "Course Updated" });
+    return res.status(200).send({ message: "Course Updated" });
   } catch (err) {
     console.error(err);
     return res.status(500).send({ message: err });
@@ -141,13 +141,13 @@ app.post("/api/course/registration", async (req, res) => {
     const values = [name, email, phone_number, linkedin_profile, course_id];
 
     const result = await pool.query(query, values);
-    res.status(201).send({
+    return res.status(201).send({
       message: "New registration created",
       registrationId: result.rows[0].id,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send({ err });
+    return res.status(500).send({ err, err });
   }
 });
 
@@ -169,7 +169,7 @@ app.put("/api/lead/update", async (req, res) => {
       return res.status(404).send("Lead with the provided ID not found");
     }
 
-    res.status(201).send("Status Updated");
+    res.status(200).send("Status Updated");
   } catch (error) {
     res.status(500).send({ error });
   }
@@ -196,7 +196,10 @@ app.get("/api/lead/search", async (req, res) => {
   query += ");";
   try {
     const result = await pool.query(query, values);
-    res.status(201).send({ details: result.rows });
+    if (result.rowCount == 0) {
+      return res.status(404).send({ message: "No data found" });
+    }
+    res.status(200).send({ details: result.rows });
   } catch (err) {
     console.error(err);
     res.status(500).send({ message: err });
@@ -217,7 +220,7 @@ app.post("/api/lead/comment", async (req, res) => {
       .send({ message: "New comment added", comment_id: result.rows[0].id });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ message: error });
+    res.status(500).send({ message: error.detail });
   }
 });
 
@@ -225,7 +228,6 @@ app.post("/setup", async (req, res) => {
   try {
     const backupData = fs.readFileSync("./setup_script.txt").toString("utf-8");
 
-    // Create the database
     await pool.query(backupData);
     res.status(200).json({ message: "Backup successful" });
   } catch (error) {
